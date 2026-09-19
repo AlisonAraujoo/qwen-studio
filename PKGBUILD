@@ -1,7 +1,7 @@
 # Maintainer: Alison Araújo
 pkgname=qwen-studio
 pkgver=2.2.3
-pkgrel=1
+pkgrel=2
 pkgdesc="Open-source Qwen AI desktop client for Linux with MCP support (Tauri v2)"
 arch=('x86_64')
 url="https://github.com/AlisonAraujoo/qwen-studio"
@@ -10,16 +10,16 @@ depends=(
     'webkit2gtk-4.1'
     'gtk3'
     'libappindicator-gtk3'
+    'libayatana-appindicator'
     'openssl'
     'librsvg'
-    'libayatana-appindicator'
+    'gst-plugins-base'
 )
 makedepends=(
     'git'
     'nodejs>=18'
     'npm'
     'rustup'
-    'cargo'
 )
 provides=('qwen-studio')
 conflicts=('qwen-studio-bin')
@@ -28,42 +28,22 @@ sha256sums=('SKIP')
 
 prepare() {
     cd "$srcdir/$pkgname"
-    
-    # Garante toolchain Rust estável
     rustup toolchain install stable --profile minimal
     rustup default stable
-    
-    # Instala dependências Node.js
     npm install --prefer-offline
 }
 
 build() {
     cd "$srcdir/$pkgname"
-    
-    # Build de produção otimizado
-    npm run tauri:build
+    npm run tauri:build -- --bundles none
 }
 
 package() {
     cd "$srcdir/$pkgname"
-    
-    # Binário compilado
-    install -Dm755 "src-tauri/target/release/$pkgname" \
-        "$pkgdir/usr/bin/$pkgname"
-    
-    # Ícones em múltiplos tamanhos
-    install -Dm644 "icon.png" \
-        "$pkgdir/usr/share/icons/hicolor/512x512/apps/$pkgname.png"
-    
-    # Desktop entry
-    install -Dm644 "$pkgname.desktop" \
-        "$pkgdir/usr/share/applications/$pkgname.desktop"
-    
-    # Documentação
-    install -Dm644 "README.md" \
-        "$pkgdir/usr/share/doc/$pkgname/README.md"
-    
-    # Licença (extrai do README se não houver LICENSE)
+    install -Dm755 "target/release/$pkgname" "$pkgdir/usr/bin/$pkgname"
+    install -Dm644 "icon.png" "$pkgdir/usr/share/icons/hicolor/512x512/apps/$pkgname.png"
+    install -Dm644 "$pkgname.desktop" "$pkgdir/usr/share/applications/$pkgname.desktop"
+    install -Dm644 "README.md" "$pkgdir/usr/share/doc/$pkgname/README.md"
     if [[ -f "LICENSE" ]]; then
         install -Dm644 "LICENSE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
     fi
