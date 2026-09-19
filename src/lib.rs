@@ -34,7 +34,7 @@ pub fn run() {
 .plugin(tauri_plugin_clipboard_manager::init())
 // .plugin(tauri_plugin_deep_link::init()) // Disabled: auth handled in-WebView now
         // Single-instance plugin removed to allow multiple windows
-        .plugin(tauri_plugin_updater::Builder::new().build())
+        // .plugin(tauri_plugin_updater::Builder::new().build()) // Disabled: no update endpoint
         .plugin(tauri_plugin_mcp_bridge::init())
         .setup(move |app| {
             use std::sync::Arc;
@@ -245,10 +245,10 @@ pub fn run() {
                                         let docs_mi = gtk::MenuItem::with_label("Documentation");
                                         let github_mi = gtk::MenuItem::with_label("GitHub");
                                         let about_mi = gtk::MenuItem::with_label("About");
-                                        let update_mi = gtk::MenuItem::with_label("Check for Updates");
+                                        // let update_mi = gtk::MenuItem::with_label("Check for Updates"); // Disabled
                                         help_menu.append(&docs_mi);
                                         help_menu.append(&github_mi);
-                                        help_menu.append(&update_mi);
+                                        // help_menu.append(&update_mi); // Disabled
                                         help_menu.append(&about_mi);
                                         help_item.set_submenu(Some(&help_menu));
                                         menu.append(&help_item);
@@ -305,11 +305,12 @@ pub fn run() {
                                         docs_mi.connect_activate(|_| { let _ = open::that("https://chat.qwen.ai"); });
                                         github_mi.connect_activate(|_| { let _ = open::that("https://github.com/youssefvdel/qwen-studio"); });
 
-                                        let ah = app_handle.clone();
-                                        update_mi.connect_activate(move |_| {
-                                            let a = ah.clone();
-                                            tauri::async_runtime::spawn(async move { check_for_updates(&a, true).await; });
-                                        });
+                                        // Update menu item disabled: no update endpoint
+                                        // let ah = app_handle.clone();
+                                        // update_mi.connect_activate(move |_| {
+                                        //     let a = ah.clone();
+                                        //     tauri::async_runtime::spawn(async move { check_for_updates(&a, true).await; });
+                                        // });
 
                                         let ver = env!("CARGO_PKG_VERSION").to_string();
                                         let w = window.clone();
@@ -326,24 +327,24 @@ pub fn run() {
                 }
             }
 
-            // Check for updates on startup (delayed to ensure webview is ready)
-            let app_handle = app.handle().clone();
-            tauri::async_runtime::spawn(async move {
-                use tokio::time::{sleep, Duration};
-                sleep(Duration::from_secs(3)).await;
-                check_for_updates(&app_handle, false).await;
-            });
+            // Check for updates disabled: no update endpoint available
+            // let app_handle = app.handle().clone();
+            // tauri::async_runtime::spawn(async move {
+            //     use tokio::time::{sleep, Duration};
+            //     sleep(Duration::from_secs(3)).await;
+            //     check_for_updates(&app_handle, false).await;
+            // });
 
-            // Periodic update check every 4 hours
-            let app_handle = app.handle().clone();
-            tauri::async_runtime::spawn(async move {
-                use tokio::time::{sleep, Duration};
-                sleep(Duration::from_secs(4 * 60 * 60)).await;
-                loop {
-                    check_for_updates(&app_handle, false).await;
-                    sleep(Duration::from_secs(4 * 60 * 60)).await;
-                }
-            });
+            // Periodic update check disabled
+            // let app_handle = app.handle().clone();
+            // tauri::async_runtime::spawn(async move {
+            //     use tokio::time::{sleep, Duration};
+            //     sleep(Duration::from_secs(4 * 60 * 60)).await;
+            //     loop {
+            //         check_for_updates(&app_handle, false).await;
+            //         sleep(Duration::from_secs(4 * 60 * 60)).await;
+            //     }
+            // });
 
             Ok(())
         })
@@ -373,9 +374,9 @@ pub fn run() {
             window::create_new_window,
             window::read_clipboard_image,
             events::webview_loaded,
-            install_update_with_progress,
-            get_update_info,
-            restart_app,
+            // install_update_with_progress, // Disabled: no update endpoint
+            // get_update_info, // Disabled: no update endpoint
+            // restart_app, // Disabled: no update endpoint
         ])
         .build(tauri::generate_context!())
         .expect("error while running tauri application")
@@ -397,6 +398,8 @@ pub fn run() {
             }
         });
 }
+
+/* Updater functions disabled: no update endpoint available
 
 /// Compares two semver version strings (e.g. "2.2.3").
 /// Returns:  -1 if a < b,  0 if a == b,  1 if a > b
@@ -625,3 +628,5 @@ async fn get_update_info(app: tauri::AppHandle) -> Result<UpdateInfo, String> {
         Err(e) => Err(e.to_string()),
     }
 }
+
+*/ // End of disabled updater functions

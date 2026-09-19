@@ -39,7 +39,6 @@
     "clipboard-manager:allow-write-text",
     "clipboard-manager:allow-read-image",
     "clipboard-manager:allow-write-image",
-    "updater:default",
     "core:event:allow-listen",
     "core:event:allow-unlisten"
   ]

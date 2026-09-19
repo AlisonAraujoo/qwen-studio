@@ -3,9 +3,7 @@
   "productName": "Qwen Studio",
   "version": "2.2.3",
   "identifier": "com.qwen.studio",
-  "build": {
-    "frontendDist": "./dist"
-  },
+  "build": {},
   "app": {
     "withGlobalTauri": true,
     "security": {
@@ -14,7 +12,6 @@
   },
   "bundle": {
     "active": true,
-    "createUpdaterArtifacts": true,
     "targets": "all",
     "resources": [
       "mcp-proxy-server.js"
@@ -46,13 +43,6 @@
       "desktop": {
         "schemes": ["qwen"]
       }
-    },
-    "updater": {
-      "active": true,
-      "endpoints": [
-        "https://github.com/youssefvdel/qwen-studio/releases/latest/download/latest.json"
-      ],
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDQwMjUwRjE1QjI1QkMzQjAKUldTQk9uUjVlYXN5eE5aY3BkOFdKc0h2TmR6Z3l0TlVjNkFjVHdGZ1hJbXl0Zm5mTjBvMjJqS3M="
     }
   }
 }
